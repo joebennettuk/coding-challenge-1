@@ -127,73 +127,39 @@ namespace ShipsSurvey
             }
 
             List<Ship> Ships = new List<Ship>();
-            int counter = 0;
+            bool firstLine = true;
             string line;
             Coordinates world = new Coordinates();
 
-            //read input.txt file
+            //read input.txt file and create objects from it
             while ((line = file.ReadLine()) != null)
             {
-                //read first line and convert to world coodinates
-                if(counter == 0)
+                //read first line and create world
+                if(firstLine)
                 {
                     int xInput = Int32.Parse(line.Split(' ')[0]);
                     int yInput = Int32.Parse(line.Split(' ')[1]);
                     world = new Coordinates() { x = xInput, y = yInput };
+                    firstLine = false;
+                    continue;
                 }
-                Console.WriteLine(line);
-                                
-                counter++;
+
+                //pretty hacky way to read the input.txt file and create ship objects
+                string[] splitLine = line.Split(' ');
+                int xtmp = Int32.Parse(splitLine[0]);
+                int ytmp = Int32.Parse(splitLine[1]);
+                string compass = splitLine[2];
+                Ship tmpShip = new Ship(world, xtmp, ytmp, (int)WorldHelper.CompassToRotation(compass));
+                string instructions = file.ReadLine();
+                tmpShip.instructions = instructions;
+                file.ReadLine();
+                Ships.Add(tmpShip);                
             }
 
-            //5 3
-            //Coordinates world = new Coordinates() { x = 5, y = 3 };
-
-            //1 1 E
-            //RFRFRFRF
-            Ship ship1 = new Ship(world, 1, 1, (int)WorldHelper.CompassToRotation("e"));
-            ship1.Right();
-            ship1.Forward();
-            ship1.Right();
-            ship1.Forward();
-            ship1.Right();
-            ship1.Forward();
-            ship1.Right();
-            ship1.Forward();
-            Console.WriteLine(ship1);
-
-            //3 2 N
-            //FRRFLLFFRRFLL
-            Ship ship2 = new Ship(world, 3, 2, (int)WorldHelper.CompassToRotation("n"));
-            ship2.Forward();
-            ship2.Right();
-            ship2.Right();
-            ship2.Forward();
-            ship2.Left();
-            ship2.Left();
-            ship2.Forward();
-            ship2.Forward();
-            ship2.Right();
-            ship2.Right();
-            ship2.Forward();
-            ship2.Left();
-            ship2.Left();
-            Console.WriteLine(ship2);
-
-            //0 3 W
-            //LLFFFLFLFL
-            Ship ship3 = new Ship(world, 2, 3, (int)WorldHelper.CompassToRotation("s"));
-            ship3.Left();
-            ship3.Left();
-            ship3.Forward();
-            ship3.Forward();
-            ship3.Forward();
-            ship3.Left();
-            ship3.Forward();
-            ship3.Left();
-            ship3.Forward();
-            ship3.Left();
-            Console.WriteLine(ship3);
+            foreach (Ship ship in Ships) {
+                Console.WriteLine(ship);
+                Console.WriteLine(ship.instructions);
+            }
 
             Console.ReadLine();
         }
