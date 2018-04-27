@@ -15,19 +15,28 @@ namespace ShipsSurvey
             W = 270
         }
 
+        //a place to record movements that will take a ship out of bounds
         public static List<DangerMovement> DangerMovements = new List<DangerMovement>();
         
-        //rotation in degrees to compass enum
+        //int input to compass enum
         public static Compass RotationToCompass(int rotation)
         {
             return (Compass)rotation;
         }
 
-        //string to rotation to compass enum
+        //string input to compass enum
         public static Compass CompassToRotation(string direction)
         {
             Enum.TryParse(direction.ToUpper(), out Compass c);
             return c;
+        }
+
+        public static bool IsMovementSafe(int x, int y, string direction)
+        {
+            return DangerMovements.Where(dm =>
+             dm.coords.x == x &&
+             dm.coords.y == y &&
+             dm.direction == direction).Any();
         }
     }
 
@@ -98,14 +107,12 @@ namespace ShipsSurvey
 
         public void Forward()
         {
+            //we may need the old location for recording a movement that places us out of bounds later
             Coordinates oldCoords = location;
 
-            string direction = WorldHelper.RotationToCompass(rotation).ToString();
             //check if we have danger location recorded
-            if (WorldHelper.DangerMovements.Where(dm =>
-             dm.coords.x == location.x &&
-             dm.coords.y == location.y &&
-             dm.direction == direction).Any())
+            string direction = WorldHelper.RotationToCompass(rotation).ToString();            
+            if (WorldHelper.IsMovementSafe(location.x, location.y, direction))
             {
                 //we do not want to move forward!
                 return;
