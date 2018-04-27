@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ShipsSurvey
 {
@@ -14,6 +15,8 @@ namespace ShipsSurvey
             W = 270
         }
 
+        public static List<DangerMovement> DangerMovements = new List<DangerMovement>();
+        
         //rotation in degrees to compass enum
         public static Compass RotationToCompass(int rotation)
         {
@@ -33,12 +36,17 @@ namespace ShipsSurvey
         public int x, y;
     }
 
+    public struct DangerMovement
+    {
+        public Coordinates coords;
+        public string direction;
+    }
+
     public class Ship
     {
         public Coordinates location;
         Coordinates world;
         int rotation;
-        Coordinates lostLocation;
         bool alive = true;
         public string instructions;
 
@@ -88,8 +96,21 @@ namespace ShipsSurvey
                 rotation += 90;
         }
 
-        public bool Forward()
+        public void Forward()
         {
+            Coordinates oldCoords = location;
+
+            string direction = WorldHelper.RotationToCompass(rotation).ToString();
+            //check if we have danger location recorded
+            if (WorldHelper.DangerMovements.Where(dm =>
+             dm.coords.x == location.x &&
+             dm.coords.y == location.y &&
+             dm.direction == direction).Any())
+            {
+                //we do not want to move forward!
+                return;
+            }
+
             //move ship forward in direction
             switch (WorldHelper.RotationToCompass(rotation))
             {
@@ -109,17 +130,19 @@ namespace ShipsSurvey
 
             //check ship is in bounds
             if (location.x <= world.x && location.y <= world.y && location.x >= 0 && location.y >= 0)
-            {
-                return true;
-            }
+                return;
 
-            //goodbye ship - only want the first location that ship went out of bounds
+            //ship went out of bounds - record the movement for future ships
             if (alive)
             {
-                lostLocation = location;
+                DangerMovement dm = new DangerMovement()
+                {
+                    coords = oldCoords,
+                    direction = direction
+                };
+                WorldHelper.DangerMovements.Add(dm);
             }
             alive = false;
-            return alive;
         }
     }
 
