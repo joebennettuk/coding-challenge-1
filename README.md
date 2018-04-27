@@ -1,3 +1,3 @@
 # StratumFive - Coding Challenge
 
-please place input.txt file at c:/input.txt
+C# .NET console application using Visual Studio. Place input.txt file at C:/input.txt. Output displays in console when run.
