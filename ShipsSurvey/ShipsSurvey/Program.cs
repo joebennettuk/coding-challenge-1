@@ -51,6 +51,15 @@ namespace ShipsSurvey
             rotation = r;
         }
 
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2}{3}",
+                location.x,
+                location.y,
+                WorldHelper.RotationToCompass(rotation),
+                alive ? "" : " LOST");
+        }
+
         public void Left()
         {
             if (rotation == 0)
@@ -106,15 +115,55 @@ namespace ShipsSurvey
     {
         static void Main(string[] args)
         {
+            //5 3
             Coordinates world = new Coordinates() { x = 5, y = 3 };
+
+            //1 1 E
+            //RFRFRFRF
             Ship ship1 = new Ship(world, 1, 1, (int)WorldHelper.CompassToRotation("e"));
-
-            ship1.Left();
+            ship1.Right();
             ship1.Forward();
+            ship1.Right();
+            ship1.Forward();
+            ship1.Right();
+            ship1.Forward();
+            ship1.Right();
+            ship1.Forward();
+            Console.WriteLine(ship1);
 
-            Console.WriteLine(String.Format("x: {0} y: {1}", ship1.location.x, ship1.location.y));
-            //Console.WriteLine(WorldHelper.RotationToCompass(ship1.rotation));
-            //Console.WriteLine((int)WorldHelper.CompassToRotation("w"));
+            //3 2 N
+            //FRRFLLFFRRFLL
+            Ship ship2 = new Ship(world, 3, 2, (int)WorldHelper.CompassToRotation("n"));
+            ship2.Forward();
+            ship2.Right();
+            ship2.Right();
+            ship2.Forward();
+            ship2.Left();
+            ship2.Left();
+            ship2.Forward();
+            ship2.Forward();
+            ship2.Right();
+            ship2.Right();
+            ship2.Forward();
+            ship2.Left();
+            ship2.Left();
+            Console.WriteLine(ship2);
+
+            //0 3 W
+            //LLFFFLFLFL
+            Ship ship3 = new Ship(world, 2, 3, (int)WorldHelper.CompassToRotation("s"));
+            ship3.Left();
+            ship3.Left();
+            ship3.Forward();
+            ship3.Forward();
+            ship3.Forward();
+            ship3.Left();
+            ship3.Forward();
+            ship3.Left();
+            ship3.Forward();
+            ship3.Left();
+            Console.WriteLine(ship3);
+
             Console.ReadLine();
         }
     }
