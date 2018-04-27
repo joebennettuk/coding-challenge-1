@@ -59,6 +59,19 @@ namespace ShipsSurvey
                 alive ? "" : " LOST");
         }
 
+        public void DoInstructions()
+        {
+            foreach(char c in instructions)
+            {
+                if(c == 'F')
+                    Forward();
+                else if(c == 'L')
+                    Left();
+                else if (c == 'R')
+                    Right();
+            }
+        }
+
         public void Left()
         {
             if (rotation == 0)
@@ -157,8 +170,8 @@ namespace ShipsSurvey
             }
 
             foreach (Ship ship in Ships) {
+                ship.DoInstructions();
                 Console.WriteLine(ship);
-                Console.WriteLine(ship.instructions);
             }
 
             Console.ReadLine();
