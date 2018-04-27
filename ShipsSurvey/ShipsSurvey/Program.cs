@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace ShipsSurvey
 {
@@ -42,6 +40,7 @@ namespace ShipsSurvey
         int rotation;
         Coordinates lostLocation;
         bool alive = true;
+        public string instructions;
 
         public Ship(Coordinates w, int x, int y, int r)
         {
@@ -115,8 +114,40 @@ namespace ShipsSurvey
     {
         static void Main(string[] args)
         {
+            //please place input.txt file in below directory or change path to correct location
+            StreamReader file;
+            string path = @"C:/input.txt";
+            try
+            {
+                file = new StreamReader(path);
+            } catch(Exception e) {
+                Console.WriteLine("Please place input.txt file in this location: " + path);
+                Console.ReadLine();
+                return;
+            }
+
+            List<Ship> Ships = new List<Ship>();
+            int counter = 0;
+            string line;
+            Coordinates world = new Coordinates();
+
+            //read input.txt file
+            while ((line = file.ReadLine()) != null)
+            {
+                //read first line and convert to world coodinates
+                if(counter == 0)
+                {
+                    int xInput = Int32.Parse(line.Split(' ')[0]);
+                    int yInput = Int32.Parse(line.Split(' ')[1]);
+                    world = new Coordinates() { x = xInput, y = yInput };
+                }
+                Console.WriteLine(line);
+                                
+                counter++;
+            }
+
             //5 3
-            Coordinates world = new Coordinates() { x = 5, y = 3 };
+            //Coordinates world = new Coordinates() { x = 5, y = 3 };
 
             //1 1 E
             //RFRFRFRF
